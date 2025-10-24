@@ -1,0 +1,789 @@
+<DOCUMENT filename="sample.html">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Krishi Assistant</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS for animations, themes, and aesthetic -->
+    <style>
+        /* --- Base & Font --- */
+        :root {
+            /* Earthy Dark Theme (Default) */
+            --bg-color: #0a1a0a; /* Very dark earthy green */
+            --text-primary: #e0f0e0; /* Soft off-white */
+            --text-secondary: #a0c0a0; /* Muted green-gray */
+            --accent-color: #8BC34A; /* Vibrant lime green */
+            --card-bg: rgba(26, 42, 26, 0.6); /* Translucent dark green */
+            --card-border: rgba(139, 195, 74, 0.3);
+            --button-bg: #8BC34A;
+            --button-text: #0a1a0a;
+            --input-bg: rgba(26, 42, 26, 0.8);
+            --input-border: #a0c0a0;
+
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Light Theme */
+        body.light-mode {
+            --bg-color: #f4f7f4; /* Light beige-green */
+            --text-primary: #1a2a1a; /* Dark earthy green */
+            --text-secondary: #4a6a4a; /* Medium green */
+            --accent-color: #689F38; /* Darker lime green */
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-border: rgba(104, 159, 56, 0.4);
+            --button-bg: #689F38;
+            --button-text: #f4f7f4;
+            --input-bg: #ffffff;
+            --input-border: #a0c0a0;
+            background: radial-gradient(ellipse at bottom, #f7fbf7 0%, #f4f7f4 100%);
+            background-color: var(--bg-color);
+        }
+
+        body {
+            background: radial-gradient(ellipse at bottom, #102a10 0%, #0a1a0a 100%);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-x: hidden;
+        }
+
+        /* Subtle nature overlay for richness */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(139, 195, 74, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(160, 192, 160, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+            transition: opacity 0.6s ease;
+        }
+
+        body.light-mode::before {
+            opacity: 0.5;
+        }
+
+        /* --- Header Controls --- */
+        .theme-toggle, .lang-select {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .theme-toggle:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            transform: scale(1.05);
+        }
+        .lang-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23a0c0a0" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.2em;
+        }
+        .lang-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(139, 195, 74, 0.2);
+        }
+
+        /* --- Main Heading "Buttery Smooth" Animation --- */
+        .animated-heading {
+            position: relative;
+            display: inline-block;
+            opacity: 0;
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+            transition: background-image 0.6s ease;
+        }
+
+        .animated-heading .text-reveal {
+            display: inline-block;
+            clip-path: inset(0 100% 0 0);
+            animation: revealText 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards;
+        }
+
+        @keyframes revealText {
+            from { clip-path: inset(0 100% 0 0); }
+            to { clip-path: inset(0 0 0 0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Shimmer/Glow Effect --- */
+        .shimmer-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .shimmer-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                transparent 20%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 80%,
+                transparent 100%
+            );
+            transform: translateX(-100%);
+            animation: shine 4s cubic-bezier(0.4, 0, 0.2, 1) 3s;
+        }
+
+        @keyframes shine {
+            to {
+                transform: translateX(100%);
+            }
+        }
+
+        /* --- Sub-elements Animation --- */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1.2s cubic-bezier(0.4, 0, 0.2, 1) 2.5s forwards;
+        }
+        .fade-in-up-delay-1 { animation-delay: 2.8s; }
+        .fade-in-up-delay-2 { animation-delay: 3.1s; }
+        .fade-in-up-delay-3 { animation-delay: 3.4s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* --- Search Box --- */
+        .search-container {
+            position: relative;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .search-container:focus-within {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 20px rgba(139, 195, 74, 0.3);
+            transform: scale(1.02);
+        }
+        .search-input {
+            background-color: transparent;
+            color: var(--text-primary);
+            width: 100%;
+            outline: none;
+        }
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .search-button {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .search-button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(139, 195, 74, 0.4);
+        }
+
+        /* --- Glassmorphism Cards --- */
+        .glass-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .glass-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(139, 195, 74, 0.25);
+        }
+
+        /* --- Personalization Modal --- */
+        #personalization-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 26, 10, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            place-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        #personalization-modal.show {
+            display: grid;
+            opacity: 1;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 400px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #personalization-modal.show .modal-content {
+            transform: scale(1) translateY(0);
+        }
+        .modal-step {
+            display: none;
+        }
+        .modal-step.active {
+            display: block;
+        }
+        .step-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        /* --- Loading Overlay --- */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-color) 0%, rgba(10, 26, 10, 0.9) 100%);
+            z-index: 999;
+            display: none;
+            place-items: center;
+            opacity: 0;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #loading-overlay.show {
+            display: grid;
+            opacity: 1;
+        }
+
+        .wheat-loader {
+            width: 120px;
+            height: 350px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            filter: drop-shadow(0 0 10px rgba(139, 195, 74, 0.3));
+        }
+        
+        .wheat-stalk {
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 350" fill="none"><path d="M50 350 V 90 C 50 90 42 78 50 68 S 58 48 50 38 S 42 18 50 8 S 58 -12 50 -22 M 50 38 C 50 38 54 33 59 33 S 69 28 69 28 M 50 38 C 50 38 46 33 41 33 S 31 28 31 28 M 50 53 C 50 53 54 48 59 48 S 69 43 69 43 M 50 53 C 50 53 46 48 41 48 S 31 43 31 43 M 50 68 C 50 68 54 63 59 63 S 69 58 69 58 M 50 68 C 50 68 46 63 41 63 S 31 58 31 58" stroke="%23e0f0e0" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.9"/></svg>');
+            background-repeat: no-repeat;
+            background-position: bottom center;
+            background-size: contain;
+            clip-path: polygon(50% 100%, 50% 100%);
+            animation: growWheatElegant 3.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        /* Enhanced wheat growth with sway */
+        @keyframes growWheatElegant {
+            0% {
+                clip-path: polygon(50% 100%, 50% 100%);
+                transform: rotate(-5deg);
+            }
+            50% {
+                clip-path: polygon(40% 50%, 60% 50%);
+                transform: rotate(3deg);
+            }
+            100% {
+                clip-path: polygon(0% 0%, 100% 0%, 60% 100%, 40% 100%);
+                transform: rotate(0deg);
+            }
+        }
+
+        .wheat-stalk::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(to top, #8BC34A, transparent);
+            transform: translateX(-50%);
+            opacity: 0;
+            animation: seedBloom 3s 2s forwards;
+        }
+
+        @keyframes seedBloom {
+            to {
+                opacity: 1;
+                height: 40px;
+            }
+        }
+
+        #loading-text {
+            margin-top: 2rem;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        /* Page Transitions */
+        #pre-search-content, #post-search-content {
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #pre-search-content.fade-out {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        #post-search-content.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* New rule for light mode heading */
+        body.light-mode .animated-heading {
+            background-image: linear-gradient(to right, var(--text-secondary), var(--text-primary), var(--text-secondary));
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8">
+
+    <!-- === HEADER: Controls === -->
+    <header class="flex justify-end items-center space-x-4 mb-8">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="theme-toggle p-2 rounded-lg">
+            <!-- Sun Icon -->
+            <svg id="theme-icon-light" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            <!-- Moon Icon (hidden by default) -->
+            <svg id="theme-icon-dark" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+        <!-- Language Select -->
+        <div class="relative">
+            <select id="lang-select" class="lang-select pl-4 pr-10 py-2 rounded-lg text-sm font-medium">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी (Hindi)</option>
+                <option value="ta">தமிழ் (Tamil)</option>
+                <option value="te">తెలుగు (Telugu)</option>
+                <option value="bn">বাংলা (Bengali)</option>
+                <option value="mr">मराठी (Marathi)</option>
+                <option value="gu">ગુજરાતી (Gujarati)</option>
+                <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                <option value="ml">മലയാളം (Malayalam)</option>
+                <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- === MAIN CONTENT AREA === -->
+    <main class="max-w-7xl mx-auto px-4">
+
+        <!-- === Weather Widget (Shared) === -->
+        <div id="weather-widget" class="glass-card rounded-xl p-4 mb-8 max-w-sm ml-auto fade-in-up" style="animation-delay: 2.8s;">
+            <div class="flex justify-between items-center">
+                <div>
+                    <span class="block text-lg font-bold" data-en="New Delhi" data-hi="नई दिल्ली" data-ta="நியூ டெல்லி" data-te="న్యూ ఢిల్లీ" data-bn="নতুন দিল্লি" data-mr="नवी दिल्ली" data-gu="નવી દિલ્હી" data-kn="ನ್ಯೂ ದೆಹಲಿ" data-ml="ന്യൂ ഡെൽഹി" data-pa="ਨਵੀਂ ਦਿੱਲੀ">New Delhi</span>
+                    <span class="block text-sm text-secondary" data-en="Real-time Weather" data-hi="वास्तविक समय का मौसम" data-ta="நிகழ்நேர வானிலை" data-te="రియల్-టైమ్ వెదురు" data-bn="রিয়েল-টাইম আবহাওয়া" data-mr="वास्तविक वेळेचे हवामान" data-gu="રીઅલ-ટાઇમ વેધર" data-kn="ನಿಜ ಸಮಯದ ಹವಾಮಾನ" data-ml="റിയൽ-ടൈം വെതർ" data-pa="ਰੀਅਲ-ਟਾਈਮ ਮੌਸਮ">Real-time Weather</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <!-- Weather Icon (Haze) -->
+                    <svg class="w-10 h-10 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h18M3 6h18M3 18h18"></path></svg>
+                    <span class="text-3xl font-light">28°C</span>
+                </div>
+            </div>
+            <div class="mt-2 text-sm text-secondary" data-en="Haze. Humidity: 62%. Wind: 5 km/h." data-hi="धुंध। आर्द्रता: 62%। हवा: 5 किमी/घंटा।" data-ta="புகை. ஈரப்பதம்: 62%. காற்று: 5 கி.மீ/மணி." data-te="గాలి. తేమ: 62%. గాలి: 5 కి.మీ/గం." data-bn="কুয়াশা। আর্দ্রতা: ৬২%। বাতাস: ৫ কিমি/ঘণ্টা।" data-mr="धुके. आर्द्रता: 62%. वारा: 5 किमी/तास." data-gu="ધુમ્મસ。 습度: 62%. हवा: 5 કિમી/કલાક." data-kn="ಹೊಗೆ. ತೇವಾಂಶ: 62%. ಗಾಳಿ: 5 ಕಿ.ಮೀ/ಗಂ." data-ml="ഹേസ്. ഈർപ്പം: 62%. കാറ്റ്: 5 കി.മീ/മണിക്കൂർ." data-pa="ਹਾਜ਼। ਨਮੀ: 62%। ਹਵਾ: 5 ਕਿ.ਮੀ/ਘੰਟਾ।">Haze. Humidity: 62%. Wind: 5 km/h.</div>
+        </div>
+
+        <!-- === PRE-SEARCH PAGE === -->
+        <div id="pre-search-content" class="text-center">
+            
+            <!-- Animated Heading -->
+            <h1 class="animated-heading text-4xl sm:text-6xl lg:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-200 via-white to-gray-200 shimmer-effect">
+                <span class="text-reveal" data-en="Digital Krishi Assistant" data-hi="डिजिटल कृषि सहायक" data-ta="டிஜிட்டல் கிருஷி உதவியாளர்" data-te="డిజిటల్ కృషి సహాయకుడు" data-bn="ডিজিটাল কৃষি সহায়ক" data-mr="डिजिटल कृषी सहायक" data-gu="ડિજિટલ કૃષિ સહાયક" data-kn="ಡಿಜಿಟಲ್ ಕೃಷಿ ಸಹಾಯಕ" data-ml="ഡിജിറ്റൽ കൃഷി സഹായി" data-pa="ਡਿਜੀਟਲ ਕਿਸਾਨੀ ਸਹਾਇਕ">Digital Krishi Assistant</span>
+            </h1>
+
+            <!-- "Made in GLA" Sub-heading -->
+            <p class="fade-in-up text-sm text-secondary mt-2 text-right" style="max-width: 50rem; margin-right: auto; margin-left: auto;" data-en="Made in GLA" data-hi="GLA में निर्मित" data-ta="GLA-இல் உருவாக்கப்பட்டது" data-te="GLAలో తయారు చేయబడింది" data-bn="GLA তৈরি" data-mr="GLA मध्ये बनवलेले" data-gu="GLAમાં બનાવેલું" data-kn="GLAನಲ್ಲಿ ತಯಾರಿಸಲ್ಪಟ್ಟಿದೆ" data-ml="GLA-ൽ നിർമ്മിച്ചത്" data-pa="GLA ਵਿੱਚ ਬਣਾਇਆ">Made in GLA</p>
+
+            <!-- Tagline -->
+            <p class="fade-in-up-delay-1 text-lg sm:text-xl text-secondary max-w-2xl mx-auto mt-6" data-en="Smart farming made simple. Get personalized crop, weather, and market insights in your own language — anytime, anywhere." data-hi="स्मार्ट खेती हुई आसान। अपनी भाषा में व्यक्तिगत फसल, मौसम और बाजार की जानकारी प्राप्त करें - कभी भी, कहीं भी।" data-ta="உclever விவசாயம் எளிமையாக. உங்கள் மொழியில் தனிப்பயன் பயிர், வானிலை மற்றும் சந்தை தகவல்களைப் பெறுங்கள் — எப்போதும், எங்கும்." data-te="స్మార్ట్ వ్యవసాయం సులభం. మీ భాషలో వ్యక్తిగత పంట, వాతావరణ మరియు మార్కెట్ అంతర్దృష్టులు పొందండి — ఎప్పుడైనా, ఎక్కడైనా." data-bn="স্মার্ট কৃষি সহজ। আপনার ভাষায় ব্যক্তিগতকৃষি, আবহাওয়া এবং বাজার অন্তর্দৃষ্টি পান — যেকোনো সময়, যেকোনো জায়গায়।" data-mr="स्मार्ट शेती सोपी. तुमच्या भाषेत वैयक्तिक पिक, हवामान आणि बाजार माहिती मिळवा — कधीही, कुठेही." data-gu="સ્માર્ટ ખેતી સરળ. તમારી ભાષામાં વ્યક્તિગત પાક, હવામાન અને બજાર આંતરદૃષ્ટિ મેળવો — કોઈપણ સમયે, કોઈપણ જગ્યાએ." data-kn="ಸ್ಮಾರ್ಟ ಹಸುಗೆ ಸರಳ. ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ ವೈಯಕ್ತಿಕ ಬೆಳೆ, ಹವಾಮಾನ ಮತ್ತು ಮಾರುಕಟ್ಟೆ ಒಳನೋಟಗಳನ್ನು ಪಡೆಯಿರಿ — ಯಾವುದೇ ಸಮಯದಲ್ಲಿ, ಯಾವುದೇ ಸ್ಥಳದಲ್ಲಿ." data-ml="സ്മാർട്ട് കൃഷി ലളിതമാക്കി. നിങ്ങളുടെ ഭാഷയിൽ വ്യക്തിഗത വിള, കാലാവസ്ഥ, വിപണി ഉൾക്കാഴ്ചകൾ ലഭിക്കുക — എപ്പോൾ വേണമെങ്കിലും, എവിടെയെങ്കിലും.">Smart farming made simple. Get personalized crop, weather, and market insights in your own language — anytime, anywhere.</p>
+
+            <!-- Search Form -->
+            <form id="search-form" class="fade-in-up-delay-2 max-w-2xl mx-auto mt-12">
+                <div class="search-container flex items-center p-2 rounded-full shadow-lg">
+                    <!-- Voice Input Button -->
+                    <button type="button" class="p-3 rounded-full text-secondary hover:text-primary transition-colors" id="voice-btn">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                    </button>
+                    <!-- Search Input -->
+                    <input type="text" id="search-input" class="search-input flex-1 px-4 py-2 text-lg" data-placeholder-en="Enter crop name (e.g., Wheat, Rice...)" data-placeholder-hi="फसल का नाम दर्ज करें (जैसे, गेहूं, चावल...)" data-placeholder-ta="பயிர் பெயரை உள்ளிடவும் (எ.கா., கோதுமை, அரிசி...)" data-placeholder-te="పంట పేరు ఎంటర్ చేయండి (ఉదా., గోధుమ, వరి...)" data-placeholder-bn="ফসলের নাম লিখুন (যেমন, গম, চাল...)" data-placeholder-mr="पिकाचे नाव टाका (उदा., गहू, तांदूळ...)" data-placeholder-gu="પાકનું નામ દાખલ કરો (દા.ત., ઘઉં, ચોખા...)" data-placeholder-kn="ಬೆಳೆಯ ಹೆಸರನ್ನು ನಮೂದಿಸಿ (ಉದಾ., ಗೋಧಿ, ಅಕ್ಕಿ...)" data-placeholder-ml="പയർക്കൊച്ചിന്റെ പേര് നൽകുക (ഉദാ., ഗോതമ്പ്, അരി...)" data-placeholder-pa="ਫਸਲ ਦਾ ਨਾਮ ਦਾਖਲ ਕਰੋ (ਉਦਾ., ਗਹੂੰ, ਚਾਵਲ...)" placeholder="Enter crop name (e.g., Wheat, Rice...)">
+                    <!-- Analyze Button -->
+                    <button type="submit" class="search-button px-6 py-3 rounded-full font-semibold text-base" data-en="Analyze" data-hi="विश्लेषण" data-ta="பகுப்பாய்வு" data-te="విశ్లేషణ" data-bn="বিশ্লেষণ" data-mr="विश्लेषण" data-gu="વિશ્લેષણ" data-kn="ವಿಶ್ಲೇಷಣೆ" data-ml="വിശകലനം" data-pa="ਵਿਸ਼ਲੇਸ਼ਣ">Analyze</button>
+                </div>
+            </form>
+
+            <!-- "About" Section -->
+            <div class="fade-in-up-delay-3 max-w-4xl mx-auto mt-16 text-left text-secondary space-y-4 text-base">
+                <p data-en="This is an AI/ML powered Digital Krishi Assistant, a smart advisory system that offers data-driven, contextual, and farmer-friendly recommendations across the farming lifecycle." data-hi="यह एक AI/ML संचालित डिजिटल कृषि सहायक है, जो एक स्मार्ट सलाहकार प्रणाली है जो खेती के जीवनचक्र में डेटा-संचालित, प्रासंगिक और किसान-अनुकूल सिफारिशें प्रदान करती है।" data-ta="இது AI/ML சக்தியுடன் டிஜிட்டல் கிருஷி உதவியாளர், விவசாய வாழ்க்கைச் சுழற்சியில் தரவு சார்ந்த, சூழலியல் மற்றும் விவசாயிகளுக்கு உகந்த பரிந்துரைகளை வழங்கும் ஸ்மார்ட் ஆலோசனை அமைப்பு." data-te="ఇది AI/ML సహాయంతో డిజిటల్ కృషి సహాయకుడు, వ్యవసాయ జీవిత చక్రంలో డేటా-ఆధారిత, సందర్భానుసారి మరియు రైతులకు స్నేహపూర్వక సిఫార్సులను అందించే స్మార్ట్ సలహా వ్యవస్థ." data-bn="এটি একটি AI/ML চালিত ডিজিটাল কৃষি সহায়ক, যা কৃষি জীবনচক্র জুড়ে ডেটা-চালিত, প্রসঙ্গগত এবং কৃষক-বান্ধব সুপারিশ প্রদান করে এমন একটি স্মার্ট উপদেষ্টা ব্যবস্থা।" data-mr="हे AI/ML चालित डिजिटल कृषी सहायक आहे, शेती जीवनचक्रात डेटा-चालित, संदर्भित आणि शेतकरी-मैत्रीपूर्ण शिफारशी देणारी स्मार्ट सल्लागार प्रणाली." data-gu="આ AI/ML દ્વારા ચલિત ડિજિટલ કૃષિ સહાયક છે, જે ખેતી જીવનચક્રમાં ડેટા-આધારિત, સંદર્ભિત અને ખેડૂત-મૈત્રીપૂર્ણ ભલામણો આપતી સ્માર્ટ સલાહકાર પ્રણાલી છે." data-kn="ಇದು AI/ML ಸಬಲೀಕರಿಸಿದ ಡಿಜಿಟಲ್ ಕೃಷಿ ಸಹಾಯಕ, ಕೃಷಿ ಜೀವನಚಕ್ರದಾದ್ಯಂತ ಡೇಟಾ-ಆಧಾರಿತ, ಸಂದರ್ಭೀಕೃತ ಮತ್ತು ರೈತರಿಗೆ ಸ್ನೇಹಪೂರ್ವಕ ಶಿಫಾರಸುಗಳನ್ನು ನೀಡುವ ಸ್ಮಾರ್ಟ್ ಸಲಹೆ ವ್ಯವಸ್ಥೆ." data-ml="ഇത് AI/ML പവർഡ് ഡിജിറ്റൽ കൃഷി അസിസ്റ്റന്റാണ്, കൃഷി ജീവിതചക്രത്തിലൂടെ ഡാറ്റാ-ഡ്രൈവൻ, കോണ്ടെക്സ്റ്റ്വൽ, ഫാമർ-ഫ്രണ്ട്ലി ശുപാർശകൾ നൽകുന്ന സ്മാർട്ട് ആഡ്വൈസറി സിസ്റ്റം." data-pa="ਇਹ AI/ML ਅਨੁਪਪੁਰਿਤ ਡਿਜੀਟਲ ਕਿਸਾਨੀ ਸਹਾਇਕ ਹੈ, ਜੋ ਖੇਤੀਬਾੜੀ ਜੀਵਨ ਚੱਕਰ ਵਿੱਚ ਡੇਟਾ-ਚਾਲਿਤ, ਸੰਦਰਭ ਅਤੇ ਕਿਸਾਨ-ਅਨੁਕੂਲ ਸਿਫਾਰਸ਼ਾਂ ਪ੍ਰਦਾਨ ਕਰਨ ਵਾਲੀ ਸਮਾਰਟ ਸਲਾਹਕਾਰ ਪ੍ਰਣਾਲੀ ਹੈ।">This is an AI/ML powered Digital Krishi Assistant, a smart advisory system that offers data-driven, contextual, and farmer-friendly recommendations across the farming lifecycle.</p>
+                <p data-en="It provides personalized insights based on location, crop type, soil data, and weather patterns. It integrates with real-time data sources like satellite imagery, IoT sensors, and government databases. It supports regional languages and voice interfaces for inclusive accessibility, offers guidance on crop planning, disease prediction, fertilizer usage, irrigation schedules, and market trends. Our objective is to empower farmers with intelligent, localized, and real-time decision support, ultimately increasing productivity, reducing input costs, and improving livelihoods." data-hi="यह स्थान, फसल प्रकार, मिट्टी के डेटा और मौसम के पैटर्न के आधार पर व्यक्तिगत अंतर्दृष्टि प्रदान करता है। यह सैटेलाइट इमेजरी, IoT सेंसर और सरकारी डेटाबेस जैसे रीयल-टाइम डेटा स्रोतों के साथ एकीकृत होता है। यह समावेशी पहुंच के लिए क्षेत्रीय भाषाओं और वॉयस इंटरफेस का समर्थन करता है, फसल योजना, रोग की भविष्यवाणी, उर्वरक उपयोग, सिंचाई कार्यक्रम और बाजार के रुझानों पर मार्गदर्शन प्रदान करता है। हमारा उद्देश्य किसानों को बुद्धिमान, स्थानीयकृत और वास्तविक समय पर निर्णय समर्थन के साथ सशक्त बनाना है, अंततः उत्पादकता बढ़ाना, इनपुट लागत कम करना और आजीविका में सुधार करना है।" data-ta="இது இடம், பயிர் வகை, மண் தரவு மற்றும் வானிலை வடிவங்களின் அடிப்படையில் தனிப்பயன் உள்ளடக்கங்களை வழங்குகிறது. இது செயற்கைக்கோள் படங்கள், IoT சென்சர்கள் மற்றும் அரசு தரவுத்தளங்கள் போன்ற நிகழ்நேர தரவு மூலங்களுடன் ஒருங்கிணைக்கிறது. இது உள்ளடக்க அணுகலுக்காக பிராந்திய மொழிகள் மற்றும் குரல் இடைமுகங்களை ஆதரிக்கிறது, பயிர் திட்டமிடல், நோய் கணிப்பு, உரம் பயன்பாடு, நீர்ப்பாசன அட்டவணைகள் மற்றும் சந்தை போக்குகளுக்கு வழிகாட்டுதலை வழங்குகிறது. நமது இலக்கு விவசாயிகளை அறிவுசார், உள்ளூர் மற்றும் நிகழ்நேர முடிவெடுப்பு ஆதரவுடன் வலுப்படுத்துவது, இறுதியில் உற்பத்தித்திறனை அதிகரிப்பது, உள்ளீட்ட செலவுகளை குறைப்பது மற்றும் জீவனோபாதங்களை மேம்படுத்துவது." data-te="ఇది స్థానం, పంట రకం, మట్టి డేటా మరియు వాతావరణ నమూనాల ఆధారంగా వ్యక్తిగత అంతర్దృష్టులను అందిస్తుంది. ఇది స్యాటిలైట్ చిత్రాలు, IoT సెన్సర్లు మరియు ప్రభుత్వ డేటాబేస్‌ల వంటి రియల్-టైమ్ డేటా మూలాలతో ఏకీకృతమవుతుంది. ఇది సమावేశక అందుబాటు కోసం ప్రాంతీయ భాషలు మరియు వాయిస్ ఇంటర్‌ఫేస్‌లను మద్దతు ఇస్తుంది, పంట ప్రణాళిక, వ్యాధి అంచనా, ఎరువుల వాడకం, సాగు షెడ్యూల్‌లు మరియు మార్కెట్ ట్రెండ్‌లపై మార్గదర్శకత్వం అందిస్తుంది. మా లక్ష్యం రైతులను తెలివైన, స్థానికీకరించిన మరియు రియల్-టైమ్ నిర్ణయ సమర్థనతో సాధికారీ చేయడం, చివరికి ఉత్పాదకతను పెంచడం, ఇన్‌పుట్ ఖర్చులను తగ్గించడం మరియు జీవనోపాధులను మెరుగుపరచడం." data-bn="এটি স্থান, ফসলের ধরন, মাটির ডেটা এবং আবহাওয়ার ধরণের উপর ভিত্তি করে ব্যক্তিগত অন্তর্দৃষ্টি প্রদান করে। এটি স্যাটেলাইট চিত্র, IoT সেন্সর এবং সরকারি ডেটাবেসের মতো রিয়েল-টাইম ডেটা উৎসের সাথে একীভূত হয়। এটি অন্তর্ভুক্তিমূলক অ্যাক্সেসিবিলিটির জন্য আঞ্চলিক ভাষা এবং ভয়েস ইন্টারফেস সমর্থন করে, ফসল পরিকল্পনা, রোগ পূর্বাভাস, সার ব্যবহার, সেচের সময়সূচি এবং বাজার প্রবণতার উপর নির্দেশনা প্রদান করে। আমাদের উদ্দেশ্য হলো কৃষকদের বুদ্ধিমান, স্থানীয়কৃত এবং রিয়েল-টাইম সিদ্ধান্ত সমর্থনের মাধ্যমে ক্ষমতায়ন করা, শেষ পর্যন্ত উৎপাদনশীলতা বাড়ানো, ইনপুট খরচ কমানো এবং জীবিকা উন্নত করা।" data-mr="ते स्थान, पिक प्रकार, माती डेटा आणि हवामान पॅटर्नवर आधारित वैयक्तिक अंतर्दृष्टी देते. ते उपग्रह प्रतिमा, IoT सेन्सर आणि सरकारी डेटाबेससारख्या रिअल-टाइम डेटा स्रोतांसह एकत्रित होते. ते समावेशक प्रवेशयोग्यतेसाठी प्रादेशिक भाषा आणि व्हॉइस इंटरफेसला समर्थन देते, पिक नियोजन, रोग भविष्यकाळ, खत वापर, सिंचन वेळापत्रक आणि बाजार ट्रेंडवर मार्गदर्शन देते. आमचा उद्देश शेतकऱ्यांना बुद्धिमान, स्थानिक आणि रिअल-टाइम निर्णय समर्थनाने सक्षम करणे, शेवटी उत्पादकता वाढवणे, इनपुट खर्च कमी करणे आणि उपजीविका सुधारणे." data-gu="આ સ્થાન, પાક પ્રકાર, માટી ડેટા અને વાતાવરણ પેટર્ન પર આધારિત વ્યક્તિગત આંતરદૃષ્ટિ આપે છે. તે સેટેલાઇટ ઇમેજરી, IoT સેન્સર્સ અને સરકારી ડેટાબેઝ જેવા રીઅલ-ટાઇમ ડેટા સ્ત્રોતો સાથે એકીકૃત થાય છે. તે સમાવેશી પહોંચ માટે પ્રાદેશિક ભાષાઓ અને વૉઇસ ઇન્ટરફેસને સમર્થન આપે છે, પાક આયોજન, રોગ અનુમાન, ખાતર વપરાશ, સિંચાઈ અનુસૂચિ અને બજાર વલણો પર માર્ગદર્શન આપે છે. અમારું ઉદ્દેશ્ય ખેડૂતોને બુદ્ધિશાળી, સ્થાનિક અને વાસ્તવિક સમયના નિર્ણય સમર્થન સાથે સશક્ત બનાવવાનો છે, આખરે ઉત્પાદકતા વધારવી, ઇનપુટ ખર્ચ ઘટાડવો અને જીવનધોરણ સુધારવો." data-kn="ಇದು ಸ್ಥಳ, ಬೆಳೆಯ ವಿಧ, ಮಣ್ಣಿನ ಡೇಟಾ ಮತ್ತು ಹವಾಮಾನ ವಿನ್ಯಾಸಗಳ ಆಧಾರದಲ್ಲಿ ವೈಯಕ್ತಿಕ ಒಳನೋಟಗಳನ್ನು ನೀಡುತ್ತದೆ. ಇದು ಉಪಗ್ರಹ ಚಿತ್ರಗಳು, IoT ಸೆನ್ಸರ್‌ಗಳು ಮತ್ತು ಸರ್ಕಾರಿ ಡೇಟಾಬೇಸ್‌ಗಳಂತಹ ನಿಜ ಸಮಯದ ಡೇಟಾ ಮೂಲಗಳೊಂದಿಗೆ ಸಂಯೋಜಿಸಲ್ಪಡುತ್ತದೆ. ಇದು ಸಮಾವೇಶಕ ಪ್ರವೇಶಕ್ಕಾಗಿ ಪ್ರಾದೇಶಿಕ ಭಾಷೆಗಳು ಮತ್ತು ಧ್ವನಿ ಇಂಟರ್‌ಫೇಸ್‌ಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ, ಬೆಳೆ ಯೋಜನೆ, ರೋಗ ಪೂರ್ವಾನುಮಾನ, ಉರವರಕ ಬಳಕೆ, ನೀರು ಸಿಂಚನೆ ಅನುಸೂಚಿಗಳು ಮತ್ತು ಮಾರುಕಟ್ಟೆಯ ಪ್ರವೃತ್ತಿಗಳಿಗೆ ಮಾರ್ಗದರ್ಶನ ನೀಡುತ್ತದೆ. ನಮ್ಮ ಉದ್ದೇಶ್ಯ ರೈತರನ್ನು ಬುದ್ಧಿವಂತ, ಸ್ಥಳೀಯ ಮತ್ತು ನಿಜ ಸಮಯದ ನಿರ್ಧಾರ ಸಮರ್ಥನದೊಂದಿಗೆ ಸಬಲೀಕರಿಸುವುದು, ಅಂತಿಮವಾಗಿ ಉತ್ಪಾದಕತೆಯನ್ನು ಹೆಚ್ಚಿಸುವುದು, ಇನ್‌ಪುಟ್ ವೆಚ್ಚಗಳನ್ನು ಕಡಿಮೆ ಮಾಡುವುದು ಮತ್ತು ಜೀವನೋಪಾಧಗಳನ್ನು ಸುಧಾರಿಸುವುದು." data-ml="ഇത് സ്ഥലം, വിളയുടെ തരം, മണ്ണ് ഡാറ്റ, കാലാവസ്ഥാ പാറ്റേണുകൾ എന്നിവയുടെ അടിസ്ഥാനത്തിൽ വ്യക്തിഗത ഉൾക്കാഴ്ചകൾ നൽകുന്നു. ഇത് ഉപഗ്രഹ ചിത്രങ്ങൾ, IoT സെൻസറുകൾ, സർക്കാർ ഡാറ്റാബേസുകൾ തുടങ്ങിയ റിയൽ-ടൈം ഡാറ്റ സ്രോതസ്സുകളുമായി സമന്വയിപ്പിക്കുന്നു. ഇത് ഉൾപ്പെടുത്തുന്ന ആക്സസിബിലിറ്റിക്കായി പ്രാദേശിക ഭാഷകളും വോയ്സ് ഇന്റർഫേസുകളും പിന്തുണയ്ക്കുന്നു, വിള പ്ലാനിങ്, രോഗ പ്രവചനം, സാരം ഉപയോഗം, വിളർച്ചാ ഷെഡ്യൂളുകൾ, മാർക്കറ്റ് ട്രെൻഡുകൾ എന്നിവയ്ക്കുള്ള മാർഗദർശനം നൽകുന്നു. നമ്മുടെ ലക്ഷ്യം കർഷകരെ ബുദ്ധിപൂർവം, സ്ഥാനം നിർണയിക്കപ്പെട്ട, റിയൽ-ടൈം തീരുമാന സഹായത്തോടെ ശക്തിപ്പെടുത്തുക, അതിനാൽ ഉൽപാദനക്ഷമത വർധിപ്പിക്കുക, ഇൻപുട്ട് ചെലവുകൾ കുറയ്ക്കുക, ജീവനോപാധികൾ മെച്ചപ്പെടുത്തുക.">It provides personalized insights based on location, crop type, soil data, and weather patterns. It integrates with real-time data sources like satellite imagery, IoT sensors, and government databases. It supports regional languages and voice interfaces for inclusive accessibility, offers guidance on crop planning, disease prediction, fertilizer usage, irrigation schedules, and market trends. Our objective is to empower farmers with intelligent, localized, and real-time decision support, ultimately increasing productivity, reducing input costs, and improving livelihoods.</p>
+            </div>
+        </div>
+
+        <!-- === POST-SEARCH PAGE === -->
+        <div id="post-search-content" class="hidden opacity-0 translate-y-10">
+            
+            <h2 class="text-3xl font-bold mb-6" data-en="Analysis for: Wheat" data-hi="विश्लेषण: गेहूं" data-ta="பயிர் பகுப்பாய்வு: கோதுமை" data-te="విశ్లేషణ: గోధుమ" data-bn="বিশ্লেষণ: গম" data-mr="विश्लेषण: गहू" data-gu="વિશ્લેષણ: ઘઉં" data-kn="ವಿಶ್ಲೇಷಣೆ: ಗೋಧಿ" data-ml="വിശകലനം: ഗോതമ്പ്" data-pa="ਵਿਸ਼ਲੇਸ਼ਣ: ਗਹੂੰ">Analysis for: Wheat</h2>
+
+            <!-- Results Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- Crop Specific Insights -->
+                <div class="glass-card rounded-xl p-5 md:col-span-2">
+                    <h3 class="text-xl font-semibold mb-3" data-en="Crop-Specific Insights" data-hi="फसल विशिष्ट अंतर्दृष्टि" data-ta="பயிர்-குறிப்பிட்ட உள்ளடக்கங்கள்" data-te="పంట-నిర్దిష్ట అంతర్దృష్టులు" data-bn="ফসল-বিশেষ অন্তর্দৃষ্টি" data-mr="पिक-विशिष्ट अंतर्दृष्टी" data-gu="પાક-વિશિષ્ટ આંતરદૃષ્ટિ" data-kn="ಬೆಳೆ-ನಿರ್ದಿಷ್ಟ ಒಳನೋಟಗಳು" data-ml="പയർക്കൊച്ച്-നിർദ്ദിഷ്ട ഉൾക്കാഴ്ചകൾ" data-pa="ਫਸਲ-ਨਿਰ్దਿ਷ਟ ਅੰਤਰਦ੍ਰਿਸ਼ਟੀ">Crop-Specific Insights</h3>
+                    <ul class="space-y-3 text-secondary">
+                        <li data-en="<strong>Ideal Weather:</strong> 21-26°C during grain filling. Current conditions are slightly warm." data-hi="<strong>आदर्श मौसम:</strong> दाना भरने के दौरान 21-26°C। वर्तमान परिस्थितियाँ थोड़ी गर्म हैं।" data-ta="<strong>ஆலோசனை வானிலை:</strong> தானிய நிரப்பம் 21-26°C. தற்போதைய நிலை சற்று வெப்பமானது." data-te="<strong>ఆదర్శ వాతావరణం:</strong> ధాన్యం భర్తీ 21-26°C. ప్రస్తుత పరిస్థితులు కొంచెం వెచ్చని." data-bn="<strong>আদর্শ আবহাওয়া:</strong> শস্য ভর্তি ২১-২৬°সে. বর্তমান অবস্থা সামান্য উষ্ণ।" data-mr="<strong>आदर्श हवामान:</strong> दाणा भरण 21-26°C. सध्याच्या परिस्थिती थोड्या उष्ण आहेत." data-gu="<strong>આદર્શ હવામાન:</strong> અનાજ ભરપૂર 21-26°C. વર્તમાન સ્થિતિ થોડી ગરમ છે." data-kn="<strong>ಆದರ್ಶ ಹವಾಮಾನ:</strong> ಧಾನ್ಯ ಭರ್ತಿ 21-26°C. ಪ್ರಸ್ತುತ ಸ್ಥിതಿಗಳು ಸ್ವಲ್ಪ ಶೀತಲ." data-ml="<strong>ആദർശ കാലാവസ്ഥ:</strong> ധാന്യം നിറയ്ക്കൽ 21-26°C. നിലവിലെ സാഹചര്യങ്ങൾ അല്പം ചൂടുള്ളത്." data-pa="<strong>ਆਦਰਸ਼ ਮੌਸਮ:</strong> ਅਨਾਜ ਭਰਨ 21-26°C. ਵਰਤਮਾਨ ਸਥਿਤੀਆਂ ਥੋੜ੍ਹੀਆਂ ਗਰਮ ਹਨ।"><strong>Ideal Weather:</strong> 21-26°C during grain filling. Current conditions are slightly warm.</li>
+                        <li data-en="<strong>Best Soil:</strong> Loamy soil with good drainage (pH 6.0-7.0)." data-hi="<strong>सर्वोत्तम मिट्टी:</strong> अच्छी जल निकासी वाली दोमट मिट्टी (पीएच 6.0-7.0)।" data-ta="<strong>சிறந்த மண்:</strong> நல்ல வடிகால் கொண்ட சேய்மண் (pH 6.0-7.0)." data-te="<strong>ఉత్తమ మట్టి:</strong> మంచి డ్రైనేజ్‌తో లోమీ మట్టి (pH 6.0-7.0)." data-bn="<strong>সেরা মাটি:</strong> ভালো নিকাশ সহ লোমি মাটি (pH 6.0-7.0)।" data-mr="<strong>सर्वोत्तम माती:</strong> चांगल्या निचऱ्याची चिकणमाती (pH 6.0-7.0)." data-gu="<strong>શ્રેષ્ઠ માટી:</strong> સારા નિકાલવાળી લોમી માટી (pH 6.0-7.0)." data-kn="<strong>ಉತ್ತಮ ಮಣ್ಣು:</strong> ಉತ್ತಮ ಡ್ರೈನೇಜ್‌ನ ಲೋಮಿ ಮಣ್ಣು (pH 6.0-7.0)." data-ml="<strong>ശ്രേഷ്ഠ മണ്ണ്:</strong> നല്ല വെള്ളം ഒഴുക്കുള്ള ലോമി മണ്ണ് (pH 6.0-7.0)." data-pa="<strong>ਸਭ ਤੋਂ ਵਧੀਆ ਮਿੱਟੀ:</strong> ਚੰਗੀ ਨਿਕਾਸ ਵਾਲੀ ਲੋਮੀ ਮਿੱਟੀ (pH 6.0-7.0)।"><strong>Best Soil:</strong> Loamy soil with good drainage (pH 6.0-7.0).</li>
+                        <li data-en="<strong>Fertilizers:</strong> Recommended NPK ratio 120:60:40 kg/ha. Apply in 3 split doses." data-hi="<strong>उर्वरक:</strong> अनुशंसित एनपीके अनुपात 120:60:40 किग्रा/हेक्टेयर। 3 विभाजित खुराकों में प्रयोग करें।" data-ta="<strong>உரங்கள்:</strong> பரிந்துரைக்கப்பட்ட NPK விகிதம் 120:60:40 கி.மீ/ஹே. 3 பிரிவு டோஸ்களில் பயன்படுத்தவும்." data-te="<strong>ఎరువులు:</strong> సిఫార్సు NPK నిష్పత్తి 120:60:40 కేజీ/హెక్టార్. 3 విభజన డోసులలో వాడండి." data-bn="<strong>সার:</strong> সুপারিশকৃত NPK অনুপাত ১২০:৬০:৪০ কেজি/হেক্টর. ৩ ভাগ ডোজে প্রয়োগ করুন।" data-mr="<strong>खत:</strong> शिफारस केलेले NPK प्रमाण 120:60:40 किलो/हेक्टर. 3 विभागित डोस मध्ये लावा." data-gu="<strong>ખાતર:</strong> ભલામણ કરેલ NPK ગુણોત્તર 120:60:40 કેજી/હેક્ટર. 3 વિભાજિત ડોઝમાં લાગુ કરો." data-kn="<strong>ಉರವರಕಗಳು:</strong> ಶಿಫಾರಸು ಮಾಡಿದ NPK ಅನುಪಾತ 120:60:40 ಕೆ.ಜಿ/ಹೆಕ್ಟೇರ್. 3 ವಿಭಜನೆ ಡോಸ್‌ಗಳಲ್ಲಿ ಅನ್ವಯಿಸಿ." data-ml="<strong>ഉരങ്ങൾ:</strong> ശുപാർശ ചെയ്ത NPK അനുപാതം 120:60:40 കി.ഗ്രാം/ഹെ. 3 വിഭജിത ഡോസുകളിൽ ഉപയോഗിക്കുക." data-pa="<strong>ਖਾਦ:</strong> ਸਿਫਾਰਸ਼ੀ NPK ਅਨੁਪਾਤ 120:60:40 ਕਿਲੋ/ਹੈਕਟੇਅਰ. 3 ਵੰਡਿਆਂ ਵਿੱਚ ਲਾਗੂ ਕਰੋ।"><strong>Fertilizers:</strong> Recommended NPK ratio 120:60:40 kg/ha. Apply in 3 split doses.</li>
+                        <li data-en="<strong>Irrigation Schedule:</strong> Critical stages: Crown Root Initiation (21 DAS) and Booting (85 DAS). Apply 4-6cm water per irrigation." data-hi="<strong>सिंचाई सारणी:</strong> महत्वपूर्ण चरण: क्राउन रूट इनिशिएशन (21 DAS) और बूटिंग (85 DAS)। प्रति सिंचाई 4-6 सेमी पानी दें।" data-ta="<strong>நீர்ப்பாசன அட்டவணை:</strong> முக்கிய கட்டங்கள்: கிரவுன் ரூட் இனിഷியேஷன் (21 DAS) மற்றும் பூட்டிங் (85 DAS). ஒவ்வொரு நீர்ப்பாசனத்திற்கும் 4-6 செ.மீ தண்ணீர்." data-te="<strong>సాగు షెడ్యూల్:</strong> కీలక దశలు: క్రౌన్ రూట్ ఇనిషియేషన్ (21 DAS) మరియు బూటింగ్ (85 DAS). ప్రతి సాగుకు 4-6 సెం.మీ నీరు." data-bn="<strong>সেচের সময়সূচি:</strong> গুরুত্বপূর্ণ পর্যায়: ক্রাউন রুট ইনিশিয়েশন (২১ DAS) এবং বুটিং (৮৫ DAS). প্রতি সেচে ৪-৬ সেমি জল প্রয়োগ করুন।" data-mr="<strong>सिंचन वेळापत्रक:</strong> महत्त्वाचे टप्पे: क्राउन रूट सुरूवात (21 DAS) आणि बूटिंग (85 DAS). प्रत्येक सिंचनाला 4-6 सेमी पाणी द्या." data-gu="<strong>સિંચાઈ અનુસૂચિ:</strong> મહત્વપૂર્ણ તબક્કા: ક્રાઉન રૂટ ઇનિશિએશન (21 DAS) અને બૂટિંગ (85 DAS). દરેક સિંચાઈ પ્રતિ 4-6 સે.મી. પાણી લગાવો." data-kn="<strong>ನೀರು ಸಿಂಚನೆ ಅನುಸೂಚಿ:</strong> ಕritಿಕ ಹಂತಗಳು: ಕ್ರೌನ್ ರೂಟ್ ಇನಿಷಿಯೇಷನ್ (21 DAS) ಮತ್ತು ಬೂಟಿಂಗ್ (85 DAS). ಪ್ರತಿ ಸಿಂಚನೆಗೆ 4-6 ಸೆ.ಮೀ ನೀರು." data-ml="<strong>ചോർച്ചാ ഷെഡ്യൂൾ:</strong> നിർണായക ഘട്ടങ്ങൾ: ക്രൗൺ റൂട്ട് ഇനിഷ്യേഷൻ (21 DAS) യും ബൂട്ടിങ് (85 DAS). ഓരോ ചോർച്ചയ്ക്കും 4-6 സെ.മീ വെള്ളം." data-pa="<strong>ਸਿੰਚਾਈ ਅਨੁਸੂਚੀ:</strong> ਮਹੱਤਵਪੂਰਨ ਪੜਾਅ: ਕ੍ਰਾਊਨ ਰੂਟ ਇਨੀਸ਼ੀਏਸ਼ਨ (21 DAS) ਅਤੇ ਬੂਟਿੰਗ (85 DAS). ਹਰ ਸਿੰਚਾਈ ਪ੍ਰਤੀ 4-6 ਸੈ.ਮੀ. ਪਾਣੀ ਲਗਾਓ।"><strong>Irrigation Schedule:</strong> Critical stages: Crown Root Initiation (21 DAS) and Booting (85 DAS). Apply 4-6cm water per irrigation.</li>
+                    </ul>
+                </div>
+
+                <!-- Pest & Disease Alerts -->
+                <div class="glass-card rounded-xl p-5">
+                    <h3 class="text-xl font-semibold mb-3" data-en="Pest & Disease Alerts" data-hi="कीट और रोग अलर्ट" data-ta="பூச்சி & நோய் எச்சரிக்கைகள்" data-te="పురుగు & వ్యాధి హెచ్చరికలు" data-bn="কীটপতঙ্গ & রোগ সতর্কতা" data-mr="कीटक आणि रोग अलर्ट" data-gu="પરজીવા અને રોગ સતર્કતા" data-kn="പരজീവിക & രോഗ 경고" data-ml="പെസ്റ്റ് & രോഗ അലേർട്ടുകൾ" data-pa="ਕੀੜੇ & ਬਿਮਾਰੀ ਅਲਰਟ">Pest & Disease Alerts</h3>
+                    <ul class="space-y-2 text-secondary">
+                        <li data-en="<strong class='text-red-400'>High Risk:</strong> Aphids. Monitor leaf undersides." data-hi="<strong class='text-red-400'>उच्च जोखिम:</strong> एफिड्स। पत्तियों के नीचे की निगरानी करें।" data-ta="<strong class='text-red-400'>உயர் ஆபத்து:</strong> ஆபிட்ஸ். இலை கீழ்ப்புறங்களை கண்காணிக்கவும்." data-te="<strong class='text-red-400'>అధిక ప్రమాదం:</strong> ఆఫిడ్స్. ఆకు కింది భాగాలను పర్యవేక్షించండి." data-bn="<strong class='text-red-400'>উচ্চ ঝুঁকি:</strong> অ্যাফিডস. পাতার নিচের দিক পর্যবেক্ষণ করুন।" data-mr="<strong class='text-red-400'>उच्च जोखीम:</strong> ऍफिड्स. पानांच्या खालच्या बाजूची तपासणी करा." data-gu="<strong class='text-red-400'>ઉચ્ચ જોખમ:</strong> એફિડ્સ. પાંદડાની તળિયાની નિગરાની કરો." data-kn="<strong class='text-red-400'>ಉನ್ನತ ಅಪಾಯ:</strong> ಆಫಿಡ್ಸ್. ಎಲೆಯ ಕೆಳಭಾಗಗಳನ್ನು ಮೇಲ್ವಿಚಾರಿಸಿ." data-ml="<strong class='text-red-400'>ഉയർന്ന സാധ്യത:</strong> ആഫിഡ്സ്. ഇലകളുടെ താഴത്തെ വശങ്ങൾ നിരീക്ഷിക്കുക." data-pa="<strong class='text-red-400'>ਉੱਚ ਜੋਖਮ:</strong> ਐਫਿਡਜ਼. ਪੱਤੇ ਦੇ ਹੇਠਾਂ ਨਿਗਰਾਨੀ ਕਰੋ।"><strong class='text-red-400'>High Risk:</strong> Aphids. Monitor leaf undersides.</li>
+                        <li data-en="<strong class='text-yellow-400'>Medium Risk:</strong> Yellow Rust. Check for yellow stripes on leaves." data-hi="<strong class='text-yellow-400'>मध्यम जोखिम:</strong> पीला रस्ट। पत्तियों पर पीली धारियों की जाँच करें।" data-ta="<strong class='text-yellow-400'>நடுத்தர ஆபத்து:</strong> மஞ்சள் துருப்பு. இலைகளில் மஞ்சள் ஸ്ട்ரைப்களை சரிபார்க்கவும்." data-te="<strong class='text-yellow-400'>మధ్యస్థ ప్రమాదం:</strong> గోధుమ రస్ట్. ఆకులపై గుర్ర వరుసలను తనిఖీ చేయండి." data-bn="<strong class='text-yellow-400'>মাঝারি ঝুঁকি:</strong> হলুদ মরিচা. পাতায় হলুদ স্ট্রাইপ চেক করুন।" data-mr="<strong class='text-yellow-400'>मध्यम जोखीम:</strong> पिवळा गंज. पानांवर पिवळ्या रेषांची तपासणी करा." data-gu="<strong class='text-yellow-400'>મધ્યમ જોખમ:</strong> પીળો રસ્ટ. પાંદડા પર પીળી પટ્ટીઓ તપાસો." data-kn="<strong class='text-yellow-400'>ಮಧ್ಯಮ ಅಪಾಯ:</strong> ಹಳದಿ ರಸ್ಟ್. ಎಲೆಗಳಲ್ಲಿ ಹಳದಿ ಸ್ಟ್ರಿಪ್‌ಗಳನ್ನು ಪರಿಶೀಲಿಸಿ." data-ml="<strong class='text-yellow-400'>മീഡിയം റിസ്ക്:</strong> മഞ്ഞ നസ്തം. ഇലകളിലെ മഞ്ഞ സ്ട്രൈപ്പുകൾ പരിശോധിക്കുക." data-pa="<strong class='text-yellow-400'>ਮੱਧਮ ਜੋਖਮ:</strong> ਪੀਲਾ ਰਸਟ. ਪੱਤਿਆਂ ਤੇ ਪੀਲੀਆਂ ਧਾਰੀਆਂ ਜਾਂਚੋ।"><strong class='text-yellow-400'>Medium Risk:</strong> Yellow Rust. Check for yellow stripes on leaves.</li>
+                        <li data-en="<strong class='text-green-400'>Low Risk:</strong> Termites." data-hi="<strong class='text-green-400'>कम जोखिम:</strong> दीमक।" data-ta="<strong class='text-green-400'>குறைந்த ஆபத்து:</strong> வெள்ளை உறைகள்." data-te="<strong class='text-green-400'>తక్కువ ప్రమాదం:</strong> తేనెటి." data-bn="<strong class='text-green-400'>কম ঝুঁকি:</strong> উইপোকা।" data-mr="<strong class='text-green-400'>कमी जोखीम:</strong> दीमक." data-gu="<strong class='text-green-400'>ઓછું જોખમ:</strong> જંત." data-kn="<strong class='text-green-400'>ಕಡಿಮೆ ಅപಾಯ:</strong> ಬെಲ್ಲೆ." data-ml="<strong class='text-green-400'>ലോ റിസ്ക്:</strong> തേവിളികൾ." data-pa="<strong class='text-green-400'>ਘੱਟ ਜੋਖਮ:</strong> ਦੁਮਬ।"><strong class='text-green-400'>Low Risk:</strong> Termites.</li>
+                    </ul>
+                </div>
+
+                <!-- Market Insights -->
+                <div class="glass-card rounded-xl p-5 lg:col-span-3">
+                    <h3 class="text-xl font-semibold mb-3" data-en="Market Insights" data-hi="बाजार अंतर्दृष्टि" data-ta="சந்தை உள்ளடக்கங்கள்" data-te="మార్కెట్ అంతర్దృష్టులు" data-bn="বাজার অন্তর্দৃষ্টি" data-mr="बाजार अंतर्दृष्टी" data-gu="બજાર આંતરદૃષ્ટિ" data-kn="ಮಾರುಕಟ್ಟೆ ಒಳನೋಟಗಳು" data-ml="വിപണി ഉൾക്കാഴ്ചകൾ" data-pa="ਬਜ਼ਾਰ ਅੰਤਰਦ੍ਰਿਸ਼ਟੀ">Market Insights</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-secondary">
+                        <div>
+                            <span class="block text-sm" data-en="Your Region Price" data-hi="आपके क्षेत्र की कीमत" data-ta="உங்கள் பிராந்திய விலை" data-te="మీ ప్రాంత ధర" data-bn="আপনার অঞ্চলের দাম" data-mr="तुमच्या प्रदेशाची किंमत" data-gu="તમારા વિસ્તારની કિંમत" data-kn="ನಿಮ್ಮ ಪ್ರದೇಶದ ಬೆಲೆ" data-ml="നിങ്ങളുടെ പ്രദേശത്തിന്റെ വില" data-pa="ਤੁਹਾਡੇ ਖੇਤਰ ਦੀ ਕੀਮਤ">Your Region Price</span>
+                            <span class="block text-2xl font-bold text-primary">₹2,200 /qtl</span>
+                        </div>
+                        <div>
+                            <span class="block text-sm" data-en="Prominent Cities" data-hi="प्रमुख शहर" data-ta="முக்கிய நகரங்கள்" data-te="ప్రముఖ నగరాలు" data-bn="প্রধান শহর" data-mr="प्रसिद्ध शहर" data-gu="પ્રખ્યાત શહેરો" data-kn="ಪ്രಮುಖ ನಗರಗಳು" data-ml="പ്രധാന നഗരങ്ങൾ" data-pa="ਪ੍ਰਮੁਖ ਸ਼ਹਿਰ">Prominent Cities</span>
+                            <ul class="text-primary">
+                                <li data-en="Delhi: ₹2,300 /qtl" data-hi="दिल्ली: ₹2,300 /qtl" data-ta="டெல்லி: ₹2,300 /qtl" data-te="దిల్లీ: ₹2,300 /qtl" data-bn="দিল্লি: ₹2,300 /qtl" data-mr="दिल्ली: ₹2,300 /qtl" data-gu="દિલ્હી: ₹2,300 /qtl" data-kn="ದೆಹಲಿ: ₹2,300 /qtl" data-ml="ദില്ലി: ₹2,300 /qtl" data-pa="ਦਿੱਲੀ: ₹2,300 /qtl">Delhi: ₹2,300 /qtl</li>
+                                <li data-en="Mumbai: ₹2,450 /qtl" data-hi="मुंबई: ₹2,450 /qtl" data-ta="மும்பை: ₹2,450 /qtl" data-te="ముంబై: ₹2,450 /qtl" data-bn="মুম্বাই: ₹2,450 /qtl" data-mr="मुंबई: ₹2,450 /qtl" data-gu="મુંબઈ: ₹2,450 /qtl" data-kn="ಮುಂಬೈ: ₹2,450 /qtl" data-ml="മുംബൈ: ₹2,450 /qtl" data-pa="ਮੁੰਬਈ: ₹2,450 /qtl">Mumbai: ₹2,450 /qtl</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <span class="block text-sm" data-en="Market Connect" data-hi="बाजार कनेक्ट" data-ta="சந்தை இணைப்பு" data-te="మార్కెట్ కనెక్ట్" data-bn="বাজার সংযোগ" data-mr="बाजार जोड" data-gu="બજાર જોડાણ" data-kn="ಮಾರುಕಟ್ಟೆ ಸಂಪർಕ" data-ml="മാർക്കറ്റ് കണക്റ്റ്" data-pa="ਬਜ਼ਾਰ ਕੁਨੈਕਟ">Market Connect</span>
+                            <p class="text-primary" data-en="Best time to sell: Next 2 weeks. High demand at Najafgarh Mandi." data-hi="बेचने का सबसे अच्छा समय: अगले 2 सप्ताह। नजफगढ़ मंडी में उच्च मांग।" data-ta="விற்கும் சிறந்த நேரம்: அடுத்த 2 வாரங்கள். நஜஃப்கர்ஹ் மண்டியில் உயர் தேவை." data-te="విక్రయించడానికి ఉత్తమ సమయం: తదుపరి 2 వారాలు. నజఫ్‌గఢ్ మండిలో ఉన్నత డిమాండ్." data-bn="বিক্রয়ের সেরা সময়: পরবর্তী ২ সপ্তাহ। নজাফগড় মণ্ডিতে উচ্চ চাহিদা।" data-mr="विक्रीसाठी उत्तम वेळ: पुढील 2 आठवडे. नजफगढ मंडीत उच्च मागणी." data-gu="વેચવાનો શ્રેષ્ઠ સમય: આગામી 2 અઠવાડિયા. નજફગઢ મંડીમાં ઉચ્ચ માંગ." data-kn="ಮಾರಾಟಕ್ಕೆ ಉತ್ತಮ ಸಮಯ: ಮುಂದಿನ 2 ವಾರಗಳು. ನಜಫ್‌ಗढ़್ ಮಂಡಿಯಲ್ಲಿ ಉನ್ನತ ಬೇಡಿಕೆ." data-ml="വിൽക്കാനുള്ള ഏറ്റവും നല്ല സമയം: അടുത്ത 2 ആഴ്ചകൾ. നജഫ്ഗഢ് മണ്ഡിയിൽ ഉയർന്ന ആവശ്യകത." data-pa="ਵਿਕਰੀ ਲਈ ਸਭ ਤੋਂ ਵਧੀਆ ਸਮਾਂ: ਅਗਲੇ 2 ਹਫ਼ਤੇ. ਨਜ਼ਾਫ਼ਗੜ੍ਹ ਮੰਡੀ ਵਿੱਚ ਉੱਚ ਮੰਗ।">Best time to sell: Next 2 weeks. High demand at Najafgarh Mandi.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Knowledge Hub -->
+                <div class="glass-card rounded-xl p-5 md:col-span-2">
+                    <h3 class="text-xl font-semibold mb-3" data-en="Knowledge Hub" data-hi="ज्ञान केंद्र" data-ta="அறிவு மையம்" data-te="జ్ఞాన కేంద్రం" data-bn="জ্ঞান কেন্দ্র" data-mr="ज्ञान केंद्र" data-gu="જ્ઞાન હબ" data-kn="ಜ್ಞಾನ ಹಬ್" data-ml="ജ്ഞാന ഹബ്" data-pa="ਗਿਆਨ ਹੱਬ">Knowledge Hub</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="flex items-center space-x-3 text-secondary hover:text-primary transition-colors">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span data-en="Video Guide: Modern Wheat Harvesting Techniques" data-hi="वीडियो गाइड: आधुनिक गेहूं कटाई तकनीक" data-ta="வीडியோ வழிகாட்டி: நவீன கோதுமை அறுவடை நுட்பங்கள்" data-te="వీడియో మార్గదర్శకం: ఆధునిక గోధుమ అగ్రహారం టెక్నిక్స్" data-bn="ভিডিও গাইড: আধুনিক গম কাটা কৌশল" data-mr="व्हिडिओ मार्गदर्शक: आधुनिक गहू कापणी तंत्र" data-gu="વીડિયો માર્ગદર્શિકા: આધુનિક ઘઉં કટાણી તકનીકો" data-kn="ವೀಡಿಯೊ ಮಾರ್ಗದರ್ಶಿ: ಆಧುನಿಕ ಗೋಧಿ ಹಲವು ತಂತ್ರಗಳು" data-ml="വീഡിയോ ഗൈഡ്: ആധുനിക ഗോതമ്പ് കൊയ്തൽ സാങ്കേതികതകൾ" data-pa="ਵੀਡੀਓ ਗਾਈਡ: ਆਧੁਨਿਕ ਗਹੂੰ ਕਟਾਈ ਤਕਨੀਕਾਂ">Video Guide: Modern Wheat Harvesting Techniques</span>
+                        </a></li>
+                        <li><a href="#" class="flex items-center space-x-3 text-secondary hover:text-primary transition-colors">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            <span data-en="Article: Expert Tips for Fertilizer Management" data-hi="लेख: उर्वरक प्रबंधन के लिए विशेषज्ञ सुझाव" data-ta="கட்டுரை: உரம் மேலாண்மைக்கான நிபுணர் உதவிக்குறிப்புகள்" data-te="వ్యాసం: ఎరువుల నిర్వహణ కోసం నిపుణుల సలహాలు" data-bn="অনুচ্ছেদ: সার ব্যবস্থাপনার জন্য বিশেষজ্ঞ টিপস" data-mr="लेख: खत व्यवस्थापनासाठी तज्ज्ञ टिप्स" data-gu="આર્ટિકલ: ખાતર વ્યવસ્થાપન માટે નિષ્ણાત ટીપ્સ" data-kn="ലೇಖನ: ಉರವರಕ ನಿರ್ವಹಣೆಗೆ ನಿಪುಣರ ಸಲಹೆಗಳು" data-ml="ലേഖനം: സാരം മാനേജ്മെന്റിനുള്ള വിദഗ്ധ ടിപ്സ്" data-pa="ਲੇਖ: ਖਾਦ ਪ੍ਰਬੰਧਨ ਲਈ ਮਾਹਰ ਸੁਝਾਅ">Article: Expert Tips for Fertilizer Management</span>
+                        </a></li>
+                        <li><a href="#" class="flex items-center space-x-3 text-secondary hover:text-primary transition-colors">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            <span data-en="Success Story: How Sita Devi Doubled Her Yield" data-hi="सफलता की कहानी: कैसे सीता देवी ने अपनी उपज दोगुनी की" data-ta="வெற்றிக் கதை: சீதா தேவி எப்படி தனது விளைச்சலை இரட்டிப்பாக்கினார்" data-te="విజయ కథ: సీతా దేవి తన దిగుబడిని ఎలా రెట్టింపు చేసింది" data-bn="সাফল্যের গল্প: সীতা দেবী কীভাবে তার ফলন দ্বিগুণ করলেন" data-mr="यशोगाथा: सीता देवीने तिची उत्पादन दुप्पट कसे केले" data-gu="સફળતાની વાર્તા: સીતા દેવીએ તેની ફળન કેવી રીતે બમણી કરી" data-kn="ವಿಜಯ ಕಥೆ: ಸೀತಾ ದೇವಿ ತನ್ನ ಇಳುವರಿ ಹೇಗೆ ದ್ವಿಗುಣಗೊಳಿಸಿದರು" data-ml="വിജയകഥ: സീതാദേവി തന്റെ വിളവ് എങ്ങനെ ഇരട്ടിയാക്കി" data-pa="ਸਫਲਤਾ ਕਹਾਣੀ: ਸੀਤਾ ਦੇਵੀ ਨੇ ਆਪਣੀ ਫਸਲ ਨੂੰ ਕਿਵੇਂ ਦੁੱਗਣਾ ਕੀਤਾ">Success Story: How Sita Devi Doubled Her Yield</span>
+                        </a></li>
+                    </ul>
+                </div>
+
+                <!-- Yield Tracking -->
+                <div class="glass-card rounded-xl p-5">
+                    <h3 class="text-xl font-semibold mb-3" data-en="Yield Tracking" data-hi="उपज ट्रैकिंग" data-ta="விளைச்சல் ட്രாக்கிங்" data-te="దిగుబడి ట్రాకింగ్" data-bn="ফলন ট্র্যাকিং" data-mr="उत्पादन ट्रॅकिंग" data-gu="ફળન ટ્રેકિંગ" data-kn="ಇಳುವರಿ ಟ್ರ್ಯಾಕಿಂಗ್" data-ml="വിളവ് ട്രാക്കിങ്" data-pa="ਫ਼ਸਲ ਟਰੈਕਿੰਗ">Yield Tracking</h3>
+                    <p class="text-secondary mb-2" data-en="Season-over-Season progress:" data-hi="मौसम-दर-मौसम प्रगति:" data-ta="மฤசிர்-ಅರ್ವ್-ಮೃತ್ಯು ಪ್ರಗತಿ:" data-te="సీజన్-ఓవర్-సీజన్ ప్రోగ్రెస్:" data-bn="মৌসুম-ওভার-মৌসুম অগ্রগতি:" data-mr="हंगामानुसार प्रगती:" data-gu="ઋતુ-અનુસાર પ્રગતિ:" data-kn="ಋತು-ಅತೀತ ಪ್ರಗತಿ:" data-ml="സീസൺ-ഓവർ-സീസൺ പുരോഗതി:" data-pa="ਮੌਸਮ-ਅਧੀਨ ਪ੍ਰੋਗਰੈੱਸ:">Season-over-Season progress:</p>
+                    <span class="text-sm" data-en="Est. Yield" data-hi="अनुमानित उपज" data-ta="அంచுற விளைச்சல்" data-te="అంచనా దిగుబడి" data-bn="আনুমানিক ফলন" data-mr="अंदाजे उत्पादन" data-gu="अંદાજિત ફળન" data-kn="ಅಂದಾಜು ಇಳುವರಿ" data-ml="അനുമാനിക്കപ്പെട്ട വിളവ്" data-pa="ਅੰਦਾਜ਼ਨ ਫ਼ਸਲ">Est. Yield:</span> <span class="text-lg font-bold text-primary">4.5 tons/ha</span><br>
+                    <span class="text-sm" data-en="Est. Cost" data-hi="अनुमानित लागत" data-ta="அంచுற செலவு" data-te="అంచనా ఖర్చు" data-bn="আনুমানিক খরচ" data-mr="अंदाजे खर्च" data-gu="અંદાજિત ખર્ચ" data-kn="ಅಂದಾಜು ವೆಚ್ಚ" data-ml="അനുമാനിക്കപ്പെട്ട ചെലവ്" data-pa="ਅੰਦਾਜ਼ਨ ਲਾਗਤ">Est. Cost:</span> <span class="text-lg font-bold text-primary">₹15,000 /ha</span>
+                </div>
+            </div>
+
+            <!-- Why Choose Us -->
+            <div class="glass-card rounded-xl p-6 mt-10">
+                <h2 class="text-2xl font-bold text-center mb-4" data-en="Why Choose Us?" data-hi="हमें क्यों चुनें?" data-ta="ஏன் நம்மை தேர்ந்தெடுக்க வேண்டும்?" data-te="మాము ఎందుకు ఎంచుకోవాలి?" data-bn="কেন আমাদের বেছে নেবেন?" data-mr="आम्हाला का निवडावे?" data-gu="અમને કેમ પસંદ કરવું?" data-kn="ಏಕೆ ನಾವನ್ನು ಆಯ್ಕೆಮಾಡಬೇಕು?" data-ml="ഞങ്ങളെ എന്തിന് തിരഞ്ഞെടുക്കണം?" data-pa="ਅਸੀਂ ਕਿਉਂ ਚੁਣੋ?"">Why Choose Us?</h2>
+                <div class="grid md:grid-cols-3 gap-6 text-secondary">
+                    <div>
+                        <h4 class="font-semibold text-primary" data-en="Tailored Advice" data-hi="अनुकूलित सलाह" data-ta="தனிப்பயன் ஆலோசனை" data-te="వ్యక్తిగతీకరించిన సలహా" data-bn="কাস্টমাইজড পরামর্শ" data-mr="वैयक्तिकृत सल्ला" data-gu="કસ્ટમાઇઝ્ડ સલાહ" data-kn="ತಾಳೆಮಾಡಿದ ಸಲಹೆ" data-ml="തയ്യാറാക്കിയ ഉപദേശം" data-pa="ਕਸਟਮਾਈਜ਼ਡ ਸਲਾਹ">Tailored Advice</h4>
+                        <p data-en="Our platform doesn't give generic advice. It's tailor-made for each farmer's land and crops." data-hi="हमारा मंच सामान्य सलाह नहीं देता है। यह प्रत्येक किसान की भूमि और फसलों के लिए विशेष रूप से तैयार किया गया है।" data-ta="நமது தளம் பொதுவான ஆலோசனை அளிக்கவில்லை. ஒவ்வொரு விவசாயியின் நிலம் மற்றும் பயிர்களுக்கும் தனிப்பயனாக்கப்பட்டது." data-te="మా ప్లాట్‌ఫారమ్ సాధారణ సలహా ఇవ్వదు. ప్రతి రైతు భూమి మరియు పంటలకు ప్రత్యేకంగా తయారు చేయబడింది." data-bn="আমাদের প্ল্যাটফর্ম সাধারণ পরামর্শ দেয় না. এটি প্রত্যেক কৃষকের জমি এবং ফসলের জন্য বিশেষভাবে তৈরি।" data-mr="आमचा प्लॅटफॉर्म सामान्य सल्ला देत नाही. तो प्रत्येक शेतकऱ्याच्या जमिनी आणि पिकांसाठी खास तयार केलेला आहे." data-gu="અમારું પ્લેટફોર્મ સામાન્ય સલાહ આપતું નથી. તે દરેક ખેડૂતની જમીન અને પાકો માટે ખાસ તૈયાર કરેલું છે." data-kn="ನಮ್ಮ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಸಾಮಾನ್ಯ ಸಲಹೆ ನೀಡುವುದಿಲ್ಲ. ಪ್ರತಿ ರೈತನ ಜಮೀನು ಮತ್ತು ಬೆಳೆಗಳಿಗೆ ವಿಶೇಷವಾಗಿ ತಯಾರಿಸಲ್ಪಟ್ಟಿದೆ." data-ml="ഞങ്ങളുടെ പ്ലാറ്റ്‌ഫോം പൊതുവായ ഉപദേശം നൽകുന്നില്ല. ഓരോ കർഷകന്റെയും ഭൂമിയും വിളകളുംക്കും പ്രത്യേകം തയ്യാറാക്കിയതാണ്." data-pa="ਅਸੀਂ ਸਾਧਾਰਨ ਸਲਾਹ ਨਹੀਂ ਦਿੰਦੇ. ਇਹ ਹਰ ਕਿਸਾਨ ਦੀ ਜ਼ਮੀਨ ਅਤੇ ਫ਼ਸਲਾਂ ਲਈ ਵਿਸ਼ੇਸ਼ ਤੌਰ 'ਤੇ ਬਣਾਇਆ ਗਿਆ ਹੈ।">Our platform doesn't give generic advice. It's tailor-made for each farmer's land and crops.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-primary" data-en="All-in-One Insights" data-hi="ऑल-इन-वन अंतर्दृष्टि" data-ta="அனைத்தும் ஒன்றில் உள்ளடக்கங்கள்" data-te="అన్నింటిలో ఒక అంతర్దృష్టి" data-bn="সব-ইন-ওয়ান অন্তর্দৃষ্টি" data-mr="सर्व-इन-वन अंतर्दृष्टी" data-gu="બધું-એકમાં આંતરદૃષ્ટિ" data-kn="ಎಲ್ಲಾ-ಒಂದೇ ಒಳನೋಟ" data-ml="എല്ലാം-ഒന്നിൽ ഉൾക്കാഴ്ചകൾ" data-pa="ਸਭ ਕੁਝ-ਇੱਕ ਵਿੱਚ ਅੰਤਰਦ੍ਰਿਸ਼ਟੀ">All-in-One Insights</h4>
+                        <p data-en="Combines weather, soil, fertilizers, pests, irrigation, and market insights in one place." data-hi="मौसम, मिट्टी, उर्वरक, कीट, सिंचाई और बाजार की जानकारी को एक ही स्थान पर जोड़ता है।" data-ta="வானிலை, மண், உரங்கள், பூச்சிகள், நீர்ப்பாசனம் மற்றும் சந்தை உள்ளடக்கங்களை ஒரே இடத்தில் இணைக்கிறது." data-te="వాతావరణం, మట్టి, ఎరువులు, పురుగులు, సాగు మరియు మార్కెట్ అంతర్దృష్టులను ఒక చోట కలిపితే." data-bn="আবহাওয়া, মাটি, সার, কীটপতঙ্গ, সেচ এবং বাজার অন্তর্দৃষ্টিকে এক জায়গায় একত্রিত করে।" data-mr="हवामान, माती, खत, कीटक, सिंचन आणि बाजार अंतर्दृष्टी एका ठिकाणी एकत्र करते." data-gu="હવામાન, માટી, ખાતર, જીવાત, સિંચાઈ અને બજાર આંતરદૃષ્ટિને એક જગ્યાએ જોડે છે." data-kn="ಹವಾಮಾನ, ಮಣ್ಣು, ಉರವರಕಗಳು, ಪರজೀವಿಗಳು, ನೀರು ಸಿಂಚನೆ ಮತ್ತು ಮಾರುಕಟ್ಟೆ ಒಳನೋಟಗಳನ್ನು ಒಂದೇ ಸ್ಥಳದಲ್ಲಿ ಸಂಯೋಜಿಸುತ್ತದೆ." data-ml="കാലാവസ്ഥ, മണ്ണ്, ഉരങ്ങൾ, പെസ്റ്റുകൾ, വിളർച്ച, വിപണി ഉൾക്കാഴ്ചകൾ ഒരു സ്ഥലത്ത് സംയോജിപ്പിക്കുന്നു." data-pa="ਹਵਾਮਾਨ, ਮਿੱਟੀ, ਖਾਦ, ਕੀੜੇ, ਸਿੰਚਾਈ ਅਤੇ ਬਜ਼ਾਰ ਅੰਤਰਦ੍ਰਿਸ਼ਟੀ ਨੂੰ ਇੱਕ ਜਗ੍ਹਾ ਵਿੱਚ ਜੋੜਦਾ ਹੈ।">Combines weather, soil, fertilizers, pests, irrigation, and market insights in one place.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-primary" data-en="Step-by-Step Guidance" data-hi="चरण-दर-चरण मार्गदर्शन" data-ta="படி-படியாக வழிகாட்டுதல்" data-te="దశ-బై-దశ మార్గదర్శకత్వం" data-bn="ধাপে-ধাপে নির্দেশনা" data-mr="पायरी-पायरी मार्गदर्शन" data-gu="પગલું-દર-પગલું માર્ગદર્શન" data-kn="ಹಂತ-ಹಂತದ ಮಾರ್ಗದर्शन" data-ml="പടി-പടി മാർഗദർശനം" data-pa="ਪੜਾਅ-ਦਰ-ਪੜਾਅ ਮਾਰਗਦਰਸ਼ਨ">Step-by-Step Guidance</h4>
+                        <p data-en="Farmers get clear, step-by-step guidance, not just raw data, to make informed decisions." data-hi="किसानों को सूचित निर्णय लेने के लिए केवल कच्चा डेटा नहीं, बल्कि स्पष्ट, चरण-दर-चरण मार्गदर्शन मिलता है।" data-ta="விவசாயிகள் தெளிவான, படி-படியாக வழிகாட்டுதலைப் பெறுகிறார்கள், வெறும் மூல தரவு அல்ல, தெளிவான முடிவுகளை எடுக்க." data-te="రైతులు స్పష్టమైన, దశ-బై-దశ మార్గదర్శకత్వాన్ని పొందుతారు, కేవలం రా డేటా కాదు, సమాచారపೂర్వక నిర్ణయాలు తీసుకోవడానికి." data-bn="কৃষকরা স্পষ্ট, ধাপে-ধাপে নির্দেশনা পান, শুধুমাত্র কাঁচা ডেটা নয়, সচেতন সিদ্ধান্ত নেওয়ার জন্য।" data-mr="शेतकऱ्यांना स्पष्ट, पायरी-पायरी मार्गदर्शन मिळते, फक्त कच्चे डेटा नव्हे, माहितीपूर्ण निर्णय घेण्यासाठी." data-gu="ખેડૂતોને સ્પષ્ટ, પગલું-દર-પગલું માર્ગદર્શન મળે છે, માત્ર કાચું ડેટા નહીં, માહિતીપ્રધાન નિર્ણયો લેવા માટે." data-kn="ಕർಷಕರು ಸ್ಪಷ್ಟ, ಹಂತ-ಹಂತದ ಮಾರ್ಗದರ್ಶನವನ್ನು ಪಡೆಯುತ್ತಾರೆ, ಕೇವಲ ರಾ ಡೇಟಾ ಅಲ್ಲ, ಮಾಹಿತಿಯುತ ನಿರ್ಧಾರಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳಲು." data-ml="കർഷകർക്ക് വ്യക്തമായ, പടി-പടി മാർഗദർശനം ലഭിക്കുന്നു, അസംസ്കൃത ഡാറ്റ മാത്രമല്ല, അറിവുള്ള തീരുമാനങ്ങൾ എടുക്കാൻ." data-pa="ਕਿਸਾਨਾਂ ਨੂੰ ਸਾਫ਼, ਪੜਾਅ-ਦਰ-ਪੜਾਅ ਮਾਰਗਦਰਸ਼ਨ ਮਿਲਦਾ ਹੈ, ਸਿਰਫ਼ ਕੱਚਾ ਡੇਟਾ ਨਹੀਂ, ਜਾਣਕਾਰੀ ਵਾਲੇ ਫ਼ੈਸਲੇ ਲੈਣ ਲਈ।">Farmers get clear, step-by-step guidance, not just raw data, to make informed decisions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- === PERSONALIZATION MODAL === -->
+    <div id="personalization-modal">
+        <div class="modal-content">
+            <div class="modal-step active" id="location-step">
+                <div class="step-title" data-en="Select Your Location" data-hi="अपना स्थान चुनें" data-ta="உங்கள் இடத்தை தேர்ந்தெடுக்கவும்" data-te="మీ స్థానాన్ని ఎంచుకోండి" data-bn="আপনার অবস্থান নির্বাচন করুন" data-mr="तुमचे स्थान निवडा" data-gu="તમારું સ્થાન પસંદ કરો" data-kn="ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಆಯ್ಕೆಮಾಡಿ" data-ml="നിങ്ങളുടെ സ്ഥലം തിരഞ്ഞെടുക്കുക" data-pa="ਆਪਣੀ ਥਾਂ ਚੁਣੋ">Select Your Location</div>
+                <select id="location-select" class="w-full p-3 rounded-lg border border-gray-300 mb-4">
+                    <option value="Delhi">Delhi</option>
+                    <option value="Punjab">Punjab</option>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <!-- Add more states -->
+                </select>
+                <button id="next-location" class="search-button px-6 py-2 rounded-full">Next</button>
+            </div>
+            <div class="modal-step" id="soil-step">
+                <div class="step-title" data-en="Select Soil Type" data-hi="मिट्टी का प्रकार चुनें" data-ta="மண் வகையை தேர்ந்தெடுக்கவும்" data-te="మట్టి రకాన్ని ఎంచుకోండి" data-bn="মাটির ধরন নির্বাচন করুন" data-mr="मातीचा प्रकार निवडा" data-gu="માટીનો પ્રકાર પસંદ કરો" data-kn="ಮಣ್ಣಿನ ವಿಧವನ್ನು ಆಯ್ಕೆಮಾಡಿ" data-ml="മണ്ണിന്റെ തരം തിരഞ്ഞെടുക്കുക" data-pa="ਮਿੱਟੀ ਦਾ ਤਰੀਕਾ ਚੁਣੋ">Select Soil Type</div>
+                <div class="space-y-2 mb-4">
+                    <label><input type="radio" name="soil" value="Loamy" class="mr-2"> Loamy</label>
+                    <label><input type="radio" name="soil" value="Sandy" class="mr-2"> Sandy</label>
+                    <label><input type="radio" name="soil" value="Clay" class="mr-2"> Clay</label>
+                </div>
+                <button id="submit-personalization" class="search-button px-6 py-2 rounded-full">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- === LOADING OVERLAY === -->
+    <div id="loading-overlay">
+        <div class="text-center">
+            <div class="wheat-loader">
+                <div class="wheat-stalk"></div>
+            </div>
+            <div id="loading-text" data-en="Analyzing your farm... 0%" data-hi="आपके खेत का विश्लेषण हो रहा है... 0%" data-ta="உங்கள் வயல் பகுப்பாய்வு... 0%" data-te="మీ రంగాన్ని విశ్లేషిస్తున్నాం... 0%" data-bn="আপনার খেত বিশ্লেষণ করা হচ্ছে... ০%" data-mr="तुमची शेती विश्लेषण करत आहोत... 0%" data-gu="તમારી ખેતીનું વિશ્લેષણ... 0%" data-kn="ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ವಿಶ್ಲೇಷಿಸುತ್ತಿದ್ದೇವೆ... 0%" data-ml="നിങ്ങളുടെ കൃഷിയെ വിശകലനം ചെയ്യുന്നു... 0%" data-pa="ਤੁਹਾਡੇ ਖੇਤ ਨੂੰ ਵਿਸ਼ਲੇਸ਼ਣ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ... 0%">Analyzing your farm... 0%</div>
+        </div>
+    </div>
+
+
+    <!-- JavaScript -->
+    <script>
+        // --- DOM Elements ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIconLight = document.getElementById('theme-icon-light');
+        const themeIconDark = document.getElementById('theme-icon-dark');
+        const langSelect = document.getElementById('lang-select');
+        const searchForm = document.getElementById('search-form');
+        const searchInput = document.getElementById('search-input');
+        const voiceBtn = document.getElementById('voice-btn');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+        const preSearchContent = document.getElementById('pre-search-content');
+        const postSearchContent = document.getElementById('post-search-content');
+        const personalizationModal = document.getElementById('personalization-modal');
+        const locationStep = document.getElementById('location-step');
+        const soilStep = document.getElementById('soil-step');
+        const nextLocationBtn = document.getElementById('next-location');
+        const submitPersonalizationBtn = document.getElementById('submit-personalization');
+        const locationSelect = document.getElementById('location-select');
+
+        let userCrop = '';
+        let userLocation = '';
+        let userSoil = '';
+
+        // --- Language Data Store ---
+        const langData = {
+            'analyzing': {
+                en: 'Analyzing your farm',
+                hi: 'आपके खेत का विश्लेषण हो रहा है',
+                ta: 'உங்கள் வயலை பகுப்பாய்வு செய்கிறோம்',
+                te: 'మీ రంగాన్ని విశ్లేషిస్తున్నాం',
+                bn: 'আপনার খেত বিশ্লেষণ করা হচ্ছে',
+                mr: 'तुमची शेती विश्लेषण करत आहोत',
+                gu: 'તમારી ખેતીનું વિશ્લેષણ',
+                kn: 'ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ವಿಶ್ಲೇಷಿಸುತ್ತಿದ್ದೇವೆ',
+                ml: 'നിങ്ങളുടെ കൃഷിയെ വിശകലനം ചെയ്യുന്നു',
+                pa: 'ਤੁਹਾਡੇ ਖੇਤ ਨੂੰ ਵਿਸ਼ਲੇਸ਼ਣ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ'
+            },
+            'searchInput': {
+                en: 'Enter crop name (e.g., Wheat, Rice...)',
+                hi: 'फसल का नाम दर्ज करें (जैसे, गेहूं, चावल...)',
+                ta: 'பயிர் பெயரை உள்ளிடவும் (எ.கா., கோதுமை, அரிசி...)',
+                te: 'పంట పేరు ఎంటర్ చేయండి (ఉదా., గోధుమ, వరి...)',
+                bn: 'ফসলের নাম লিখুন (যেমন, গম, চাল...)',
+                mr: 'पिकाचे नाव टाका (उदा., गहू, तांदूळ...)',
+                gu: 'પાકનું નામ દાખલ કરો (દા.ત., ઘઉં, ચોખા...)',
+                kn: 'ಬೆಳೆಯ ಹೆಸರನ್ನು ನಮೂದಿಸಿ (ಉದಾ., ಗೋಧಿ, ಅಕ್ಕಿ...)',
+                ml: 'പയർക്കൊച്ചിന്റെ പേര് നൽകുക (ഉദാ., ഗോതമ്പ്, അരി...)',
+                pa: 'ਫਸਲ ਦਾ ਨਾਮ ਦਾਖਲ ਕਰੋ (ਉਦਾ., ਗਹੂੰ, ਚਾਵਲ...)'
+            }
+        };
+
+        // --- Theme Toggle Function ---
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            themeIconLight.classList.toggle('hidden');
+            themeIconDark.classList.toggle('hidden');
+        }
+
+        // --- Language Change Function ---
+        function changeLanguage() {
+            const selectedLang = langSelect.value;
+            
+            // Update all elements with data-en/data-[lang] attributes
+            document.querySelectorAll('[data-en]').forEach(el => {
+                const langKey = selectedLang;
+                if (el.dataset[langKey]) {
+                    el.innerHTML = el.dataset[langKey];
+                } else {
+                    el.innerHTML = el.dataset.en; // Fallback to English
+                }
+            });
+
+            // Update placeholders
+            if (searchInput && langData.searchInput[selectedLang]) {
+                searchInput.placeholder = langData.searchInput[selectedLang];
+            }
+
+            // Update modal titles
+            document.querySelectorAll('.step-title').forEach(title => {
+                if (title.dataset[selectedLang]) {
+                    title.innerHTML = title.dataset[selectedLang];
+                }
+            });
+        }
+
+        // --- Personalization Modal Functions ---
+        function showPersonalizationModal(crop) {
+            userCrop = crop;
+            personalizationModal.classList.add('show');
+            locationStep.classList.add('active');
+        }
+
+        function nextStep() {
+            locationStep.classList.remove('active');
+            soilStep.classList.add('active');
+            userLocation = locationSelect.value;
+        }
+
+        function submitPersonalization() {
+            userSoil = document.querySelector('input[name="soil"]:checked')?.value || 'Loamy';
+            personalizationModal.classList.remove('show');
+            handleSearchWithPersonalization();
+        }
+
+        // --- Voice Recognition (Basic) ---
+        voiceBtn.addEventListener('click', () => {
+            if ('webkitSpeechRecognition' in window) {
+                const recognition = new webkitSpeechRecognition();
+                recognition.lang = langSelect.value === 'hi' ? 'hi-IN' : 'en-US'; // Extend for other langs
+                recognition.onresult = (e) => {
+                    searchInput.value = e.results[0][0].transcript;
+                };
+                recognition.start();
+            }
+        });
+
+        // --- Search Handler with Personalization ---
+        function handleSearch(event) {
+            event.preventDefault();
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            showPersonalizationModal(query);
+        }
+
+        async function handleSearchWithPersonalization() {
+            // Show Loading with smooth transition
+            preSearchContent.classList.add('fade-out');
+            loadingOverlay.classList.add('show');
+
+            let percent = 0;
+            const lang = langSelect.value;
+            const interval = setInterval(() => {
+                percent += 2; // Slower for elegance
+                loadingText.innerHTML = `${langData.analyzing[lang]}... ${percent}%`;
+                if (percent >= 100) {
+                    clearInterval(interval);
+                }
+            }, 35);
+
+            setTimeout(() => {
+                loadingOverlay.classList.remove('show');
+                preSearchContent.style.display = 'none';
+                postSearchContent.style.display = 'block';
+                postSearchContent.classList.add('fade-in');
+
+                clearInterval(interval);
+                loadingText.innerHTML = `${langData.analyzing[lang]}... 0%`;
+
+                // Update heading with personalization
+                const resultHeading = postSearchContent.querySelector('h2');
+                if (resultHeading) {
+                    const enText = `Analysis for ${userCrop} in ${userLocation} (${userSoil} soil)`;
+                    const hiText = `विश्लेषण: ${userCrop} ${userLocation} में (${userSoil} मिट्टी)`;
+                    // Add similar for other langs...
+                    resultHeading.dataset.en = enText;
+                    resultHeading.dataset.hi = hiText;
+                    resultHeading.innerHTML = lang === 'hi' ? hiText : enText;
+                }
+
+                // Customize content based on soil/location (simple logic)
+                customizeContent(userSoil, userLocation);
+
+            }, 3500);
+        }
+
+        function customizeContent(soil, location) {
+            // Example: Adjust fertilizer based on soil
+            const fertilizerLi = postSearchContent.querySelector('ul li:nth-child(3)');
+            if (soil === 'Sandy') {
+                fertilizerLi.innerHTML = '<strong>Fertilizers:</strong> Adjusted for Sandy soil: NPK 100:50:30 kg/ha.';
+            } // Extend for location, etc.
+        }
+
+        // --- Initialization ---
+        function init() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                toggleTheme();
+            }
+            changeLanguage();
+
+            // Event Listeners
+            themeToggle.addEventListener('click', toggleTheme);
+            langSelect.addEventListener('change', changeLanguage);
+            searchForm.addEventListener('submit', handleSearch);
+            nextLocationBtn.addEventListener('click', nextStep);
+            submitPersonalizationBtn.addEventListener('click', submitPersonalization);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
+</DOCUMENT>
